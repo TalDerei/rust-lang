@@ -1,9 +1,11 @@
 use crate::node::Node;
+use std::rc::Rc;        // Allows multiple immutable "borrows" and enables multiple owners
+use std::cell::RefCell; // Interior mutability
 
 #[derive(Debug)]
 pub struct LinkedList {
-    pub head: Option<*mut Node>,
-    pub tail: Option<*mut Node>,
+    pub head: Option<Rc<RefCell<Node>>>,
+    pub tail: Option<Rc<RefCell<Node>>>,
     pub element: usize
 }
 
@@ -16,9 +18,9 @@ impl LinkedList {
 
     pub fn insert_at_head(&mut self, item: u64) {
         let mut node = Node::new(item);
-        let n: *mut Node = &mut node;
-        self.head = Some(n);
-        self.tail = Some(n);
+        let boxed_new = Rc::new(RefCell::new(node));
+        self.head = Some(boxed_new.clone());
+        self.tail = Some(boxed_new.clone());
     }
 
     pub fn len(&self) -> usize {

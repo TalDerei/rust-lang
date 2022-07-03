@@ -11,4 +11,8 @@ impl Node {
             next: 0
         }
     }
+
+    pub fn set_item(&mut self, item: u64) {
+        self.item = item;
+    }
 }
