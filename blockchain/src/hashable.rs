@@ -1,4 +1,4 @@
-// Trait for hash functionlity
+// Trait implementing standard interface for hash functionality
 pub trait Hashable {
     fn bytes(&self) -> Vec<u8>;
 
