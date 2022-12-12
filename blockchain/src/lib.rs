@@ -1,4 +1,5 @@
-type BlockHash = Vec<u8>;
+type Hash = Vec<u8>;
+type Address = String;
 
 use std::time::{ SystemTime, UNIX_EPOCH };
 
@@ -80,6 +81,8 @@ pub fn difficulty_bytes_as_u128 (v: &Vec<u8>) -> u128 {
 mod block;
 mod hashable;
 mod blockchain;
+pub mod transaction;
 pub use crate::block::Block;
 pub use crate::hashable::Hashable;
 pub use crate::blockchain::Blockchain;
+pub use crate::transaction::Transaction;

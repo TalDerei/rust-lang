@@ -1,8 +1,64 @@
 use blockchainlib::*;
 
 fn main() {
+    let difficulty = 0x000fffffffffffffffffffffffffffff;
+
     // Genesis block
-    let mut block = Block::new(0, 0, vec![0; 32], 0, "Genisis Block".to_owned(), 0x0000ffffffffffffffffffffffffffff);
+    let mut genesis_block = Block::new(0, now(), vec![0; 32], vec![
+        Transaction {
+            inputs: vec![], 
+            outputs: vec![
+                transaction::Output {
+                    to_addr: "Alice".to_owned(),
+                    value: 50,
+                }, 
+                transaction::Output {
+                    to_addr: "Bob".to_owned(),
+                    value: 7,
+                },
+            ],
+        },
+    ], difficulty);
+    
+    // Mine block
+    genesis_block.mine();
+    println!("Mined genesis block {:?}", &genesis_block);
+
+    // Set previous hash
+    let mut last_hash = genesis_block.hash.clone();
+
+    // Instantiate blockchain struct
+    let mut blockchain = Blockchain::new();
+
+    blockchain.update_with_block(genesis_block).expect("Failed to add genesis block");
+
+    
+    let mut block = Block::new(1, now(), last_hash, vec![
+        Transaction {
+            inputs: vec![ ],
+            outputs: vec![
+                transaction::Output {
+                    to_addr: "Chris".to_owned(),
+                    value: 536,
+                },
+            ],
+        },
+        Transaction {
+            inputs: vec![
+                blockchain.blocks[0].transactions[0].outputs[0].clone(),
+            ], 
+            outputs: vec![
+                transaction::Output {
+                    to_addr: "Alice".to_owned(),
+                    value: 36,
+                }, 
+                transaction::Output {
+                    to_addr: "Bob".to_owned(),
+                    value: 12,
+                },
+            ],
+        },
+    ], difficulty);
     
     // Mine block
     block.mine();
@@ -11,22 +67,5 @@ fn main() {
     // Set previous hash
     let mut last_hash = block.hash.clone();
 
-    // Instantiate blockchain struct
-    let mut blockchain = Blockchain {
-        blocks: vec![block],
-    };
-
-    // Verification checks
-    println!("Verify: {}", &blockchain.verify());
-
-    // Append non-genesis blocks 
-    for i in 1..=10 {
-        let mut block = Block::new(i, 0, last_hash, 0, "Another Block".to_owned(), 0x0000ffffffffffffffffffffffffffff);
-
-        block.mine();
-        println!("Mined another block {:?}", &block);
-
-        last_hash = block.hash.clone();
-        blockchain.blocks.push(block);
-    }
+    blockchain.update_with_block(block).expect("Failed to add genesis block");
 }
