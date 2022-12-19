@@ -11,11 +11,13 @@ fn main() {
     println!("The list: {:?}", &my_list);
 
     match my_list.head {
-        Some(ref rc) => {
+        Some(ref rc) => { 
             rc.borrow_mut().set_item(10);
         }
         None => (),
     }
-    // borrow_mut represents the cell, and performs a borrow on the node at runtime and maintains a borrow counter
+    // `borrow_mut` represents the cell, and performs a borrow on the 
+    // node at runtime and maintains a borrow counter. `RefCell` provides
+    // interior mutability, `rc` enables multiple owners
     println!("The list: {:?}", &my_list);
 }

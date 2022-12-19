@@ -70,3 +70,12 @@ Unsafe annotations in Rust are used to bypass protections put in place by the co
 
 ```FFI (Foreign Function Interface)```
 Mechanism that allows Rust to call code written in C++, for example. 
+
+-----------------------------------------------------------------------------------------
+Q. What's the difference between self, &self, &mut self, Self?
+`self` refers to current instance of an object that takes ownership, `&self` is a borrowed
+reference of the current instance and `&mut self` can further mutate it. `Self` refers
+to the current object (i.e. struct, enum, trait).
+
+Q. Can you have memory leaks in Rust?
+Yes, if you use `unsafe` keyword and try dereferencing raw pointers.

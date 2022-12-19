@@ -25,7 +25,7 @@ fn main() {
     println!("Mined genesis block {:?}", &genesis_block);
 
     // Set previous hash
-    let mut last_hash = genesis_block.hash.clone();
+    let last_hash = genesis_block.hash.clone();
 
     // Instantiate blockchain struct
     let mut blockchain = Blockchain::new();
@@ -63,9 +63,6 @@ fn main() {
     // Mine block
     block.mine();
     println!("Mined genesis block {:?}", &block);
-
-    // Set previous hash
-    let mut last_hash = block.hash.clone();
 
     blockchain.update_with_block(block).expect("Failed to add genesis block");
 }
