@@ -12,6 +12,8 @@ and gives read/write access to the borrower. &T is an immutable reference. You c
 any number of immutable borrows at the same time, but only one mutable borrow. "Ref" borrows 
 reference fields of a struct / tuple (ie. ref c = d is the same as let c = &d);
 
+Cannot have an immutable and mutable reference to the same data to avoid data races. This is enforced by the borrow checker for enabling safe concurrency. If this wasn’t the case, then many mutable references would be allowed. Mutable references are meant to be exclusive references, while immutable references are shared references. The concept of “Reference Counting” (RC) gives shared references to data, but it cannot be mutable. To have shared mutability, you need to use an interior mutability data structure like RefCell. Instead of a garbage collection, RC uses an internal counter to track references that’s incremented (clone) and decremented (drop). These concepts prevent memory leaks and concurrency data races in the compiler itself!
+
 ```Modules```
 A module is a collection of items: functions, structs, traits, impl blocks, and even other modules.
 By default, modules have private visibility. 
@@ -32,16 +34,23 @@ This shields against memory leaks!
 Variables are in charge of freeing their own resources, so resources can only have one owner. 
 Transfering ownership of resources between variables is known as a "move". 
 
-```Borrowing```
+Rust ownership and borrow checker: for some type T you have — T, &T (shared / immutable reference), &mut T (exclusive / mutable reference).References (&T and &mut T) have lifetimes: cannot outlive T. Resources only have a single owner, so owner frees only once. This is checked at compile time by the borrow checker to prove that program does not have any data races. 
+
+```References and Borrowing```
 Borrowing is passing objects by reference (&T) instead of passing by value (T).
-Accessing data without taking ownership of it, gauranteed by the borrow checker. Mutable 
-data can be mutabley borrowed (&mut T) known as a "mutable reference" giving read/write 
-access to the borrow.
+Accessing data without taking ownership of it, gauranteed and enforced by the borrow checker. 
+Mutable data can be mutabley borrowed (&mut T) known as a "mutable reference" giving read/write 
+access to the borrow. You may have one or the other of these two kinds of borrows, but not both 
+at the same time: (1) one or more references (&T) to a resource, (2) exactly one mutable reference 
+(&mut T). This is similair to the definition of a data race: "There is a ‘data race’ when two or 
+more pointers access the same memory location at the same time, where at least one of them is writing, 
+and the operations are not synchronized."
 
 ```Liftimes```
-Lifetime is a construct that the compiler / borrow checker to ensure all borrows are valid.
-Borrow checker ensures that references always point to valid objects. Specifically, a 
-variable's lifetime begins when it is created and ends when it is destroyed.
+Lifetime is a construct by the compiler / borrow checker to ensure all borrows are valid.
+Borrow checker ensures that references always point to valid objects (ie. avoid danging
+pointers). Specifically, a variable's lifetime begins when it is created and ends when it 
+is destroyed.
 
 ```Std Library Types```
 - Dynamic vectors: [1, 2, 3],
@@ -95,14 +104,34 @@ Generics are used for generalizing types and reducing code duplication.
 Enforce error handling via print statements, panic, unimplemented keyword, option and result (enums).
 
 ----------------------------------------------------------------------------------------------------------------
+Questions: 
+
 Q. What's the difference between self, &self, &mut self, Self?
-`self` refers to current instance of an object that takes ownership, `&self` is a borrowed
+`self` refers to current instance of an object that takes ownership, `&self` is an immutable borrowed
 reference of the current instance and `&mut self` can further mutate it. `Self` refers
 to the current object (i.e. struct, enum, trait).
 
 Q. Can you have memory leaks in Rust?
-Yes, if you use `unsafe` keyword and try dereferencing raw pointers.
+Yes, if you use `unsafe` keyword and try dereferencing raw pointers. But generally compared to C / C++,
+there are no seg-faults, no null pointers, no data races, no buffer overflows, etc. Microsoft research 
+found that 70% of security vunerabilities in it's applications were memory related, as an example! 
+Also, Rust doesn't have garbage collection and small runtime, leading to small memory footprints.
 
 Q. Raw points vs references?
 Raw pointers * and references &T function similarly, but references are always safe because they point 
 to valid data because of the borrow checker. You can deterrence a raw pointer through the ‘unsafe’ block.
+
+Q. Does Rust use LLVM?
+Yes, Rust uses LLVM as a backend to compile rust. The target can be LLVM IR or binary machine code. 
+Other backends support GCC compilation, or something like "rust-gpu" backend to generate SPIR-V for GPU. 
+
+Q. Does Rust work with traditional tools and languages?
+Yes, Rust is compatible with other languages (e.g. C++) through zero-cost FFI, WASM support, and
+traditional tooling like LLVM sanitizers and optimizations, GDB debugger, Valgrind, etc. The built-in
+toolchain 'rustup' and compiler 'rust' also have many features. 
+
+Q. So how do we enable concurrent reads and writes to a shared data structure?
+Rust will force us to use synchronization. Rust will not allow you to access shared value without “mutex”. A mutex is a lock that provides safe mutations on shared data. R/W locks are extensions of this concept. 
+
+Q. What is unsafe keyword?
+In unsafe code, you can dereference raw pointers. E.g. *mut T is a raw pointer (with no lifetime) to T. It can be turned into &mut T, but doing so is unsafe. In unsafe code, you’re responsible for not adding data races. If your code crashes, audit this section of the code. 
