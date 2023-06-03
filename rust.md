@@ -101,7 +101,7 @@ There are existing trait implementation via the “derive” attribute (e.g copy
 Generics are used for generalizing types and reducing code duplication.
 
 ```Error Handling```
-Enforce error handling via print statements, panic, unimplemented keyword, option and result (enums).
+Enforce error handling via print statements, panic, unimplemented keyword, option and result (rs).
 
 ----------------------------------------------------------------------------------------------------------------
 Questions: 
@@ -135,3 +135,8 @@ Rust will force us to use synchronization. Rust will not allow you to access sha
 
 Q. What is unsafe keyword?
 In unsafe code, you can dereference raw pointers. E.g. *mut T is a raw pointer (with no lifetime) to T. It can be turned into &mut T, but doing so is unsafe. In unsafe code, you’re responsible for not adding data races. If your code crashes, audit this section of the code. 
+
+Q. Why is Rust binary size so large?
+Rust uses monomorphization and static linkink, leading to large binaries. Flags passsed into the cargo.toml file
+can dramatically reduce the binary size (e.g. debug binaries can be 30% larger than release binaries):
+https://github.com/johnthagen/min-sized-rust
