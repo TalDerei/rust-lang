@@ -1,5 +1,3 @@
-
-
 // Struct generic over lifetime 'a', tying the lifetime of the struct
 // to the lifetime of the inner slice. The struct can only live as long
 // as the inner slice is valid. 
@@ -9,16 +7,12 @@ struct MyIterWrapper<'a, T> {
 
 // Types 'a and T are generic parameters for the implementation.
 // This is an immutable, non-exclusive iterator.
-
 impl<'a, T> Iterator for MyIterWrapper<'a, T> {
     type Item = &'a T;
     
     fn next(&mut self) -> Option<Self::Item> {
-        
         if self.slice.is_empty() {
-            
             return None;
-            
         }
         // Retrieve first element
         let element = self.slice.get(0);

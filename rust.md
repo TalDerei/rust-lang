@@ -84,7 +84,7 @@ library work correctly together.
 
 ```Unsafe Operations```
 Unsafe annotations in Rust are used to bypass protections put in place by the compile
-- Dereferencing raw pointers (similiar to references)
+- Dereferencing raw pointers since it could result in a segmentation fault (accessing invalid memory)
 - Calling functions or methods which are `unsafe`
 - Accessing or modifying static mutable variables
 - Implementing unsafe traits
@@ -137,6 +137,6 @@ Q. What is unsafe keyword?
 In unsafe code, you can dereference raw pointers. E.g. *mut T is a raw pointer (with no lifetime) to T. It can be turned into &mut T, but doing so is unsafe. In unsafe code, you’re responsible for not adding data races. If your code crashes, audit this section of the code. 
 
 Q. Why is Rust binary size so large?
-Rust uses monomorphization and static linkink, leading to large binaries. Flags passsed into the cargo.toml file
+Rust uses monomorphization and static linking, leading to large binaries. Flags passsed into the cargo.toml file
 can dramatically reduce the binary size (e.g. debug binaries can be 30% larger than release binaries):
 https://github.com/johnthagen/min-sized-rust
