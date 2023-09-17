@@ -10,6 +10,7 @@ impl<T> LinkedList<T> {
     }
 
     fn push(&mut self, element: T) {
+        // Temporarily replace self.head with None
         let old_head = std::mem::replace(&mut self.head, None);
         let new_head = Box::new(Node {
             element,

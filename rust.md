@@ -154,3 +154,8 @@ Q. What are fat pointers?
 Fat pointer are references or raw pointers to Dynamically Sized Types (DSTs). Fat pointers
 store both the address and some extra information about it, like the size of the data structure. 
 E.g. trait objects and string slices.
+
+Q. What is RC and RefCell?
+'RC' enables multiple immutable "borrows" and enables multiple owners. 'RefCell' is a design pattern allowing you to mutate data even when there are  immutable references to the data, using the unsafe keyword internally. Unlike RC<T>, RefCell<T> has a single ownership over the data. The difference between Box<T> and RefCell<T> (smart pointers) is the borrowing rules are enforced  in the compiler for the former, and at runtime for the latter. 
+
+Rc gives you a reference counted version of Box. RefCell, using interior mutability, gives you runtime checked borrowing. Rc itself doesn't allow mutable borrows to what it is enclosing. Thus Rc<T> cannot directly be used for things you want to mutate. For that, you need to enclose the T in a RefCell, thus giving the final type of Rc<RefCell<T>>. Rc<RefCell<T>> means you have a shared T that can be mutated via one of the Rc smart pointers.
