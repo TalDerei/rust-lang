@@ -1,6 +1,8 @@
 ```Documentation```
+Rust Documentation: https://doc.rust-lang.org/std/index.html
 Rust by Example: https://doc.rust-lang.org/rust-by-example/mod/struct_visibility.html
 Rust Book: https://doc.rust-lang.org/book/ch10-00-generics.html
+Rust MIT: https://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/book/first-edition/README.html
 
 ``` Static Typing ```
 Rust is a statically-typed language, where variables are known at compile time. 
@@ -32,9 +34,12 @@ This shields against memory leaks!
 
 ```Ownership```
 Variables are in charge of freeing their own resources, so resources can only have one owner. 
-Transfering ownership of resources between variables is known as a "move". 
+Transfering ownership of resources between variables is known as a "move". In that case, you don't
+need to declare something as "mutable" if the ownership is transfered into another variable / function. 
 
-Rust ownership and borrow checker: for some type T you have — T, &T (shared / immutable reference), &mut T (exclusive / mutable reference).References (&T and &mut T) have lifetimes: cannot outlive T. Resources only have a single owner, so owner frees only once. This is checked at compile time by the borrow checker to prove that program does not have any data races. 
+Rust ownership and borrow checker: for some type T you have — T, &T (shared / immutable reference), &mut T (exclusive / mutable reference). References (&T and &mut T) have lifetimes: cannot outlive T. Resources only have a single owner, so owner frees only once. This is checked at compile time by the borrow checker to prove that program does not have any data races. 
+
+A popular example is 'to_owned()' method that creates owned data from borrowed data by cloning.  
 
 ```References and Borrowing```
 Borrowing is passing objects by reference (&T) instead of passing by value (T).
@@ -83,7 +88,7 @@ library work correctly together.
 1. Document Testing
 
 ```Unsafe Operations```
-Unsafe annotations in Rust are used to bypass protections put in place by the compile
+Unsafe annotations in Rust are used to bypass protections put in place by the compiler
 - Dereferencing raw pointers since it could result in a segmentation fault (accessing invalid memory)
 - Calling functions or methods which are `unsafe`
 - Accessing or modifying static mutable variables
@@ -95,13 +100,17 @@ Mechanism that allows Rust to call code written in C++, for example.
 ```Traits```
 Traits are similair to interfaces, defining a set of common behaviors / methods 
 for different types. To implement a trait for a particular type, you use the `impl` keyword.
-There are existing trait implementation via the “derive” attribute (e.g copy, debug, etc.).
+There are existing trait implementation via the “derive” attribute (e.g copy, clone, debug, etc.).
 
 ```Generics```
 Generics are used for generalizing types and reducing code duplication.
 
 ```Error Handling```
 Enforce error handling via print statements, panic, unimplemented keyword, option and result (rs).
+
+```Trait Bounds```
+Trait bounds, defined using the "where" keyword, specify constraints on the generic type parameters
+in functions, structs, or traits. 
 
 ----------------------------------------------------------------------------------------------------------------
 Questions: 
@@ -117,7 +126,7 @@ there are no seg-faults, no null pointers, no data races, no buffer overflows, e
 found that 70% of security vunerabilities in it's applications were memory related, as an example! 
 Also, Rust doesn't have garbage collection and small runtime, leading to small memory footprints.
 
-Q. Raw points vs references?
+Q. Raw pointers vs references?
 Raw pointers * and references &T function similarly, but references are always safe because they point 
 to valid data because of the borrow checker. You can deterrence a raw pointer through the ‘unsafe’ block.
 
@@ -140,3 +149,8 @@ Q. Why is Rust binary size so large?
 Rust uses monomorphization and static linking, leading to large binaries. Flags passsed into the cargo.toml file
 can dramatically reduce the binary size (e.g. debug binaries can be 30% larger than release binaries):
 https://github.com/johnthagen/min-sized-rust
+
+Q. What are fat pointers?
+Fat pointer are references or raw pointers to Dynamically Sized Types (DSTs). Fat pointers
+store both the address and some extra information about it, like the size of the data structure. 
+E.g. trait objects and string slices.
